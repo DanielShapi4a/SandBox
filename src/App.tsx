@@ -1,35 +1,33 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useState } from "react";
+import { Box, Button } from "@mui/material";
+import OpenLayersMap from "./componenets/Map";
+import { FormModal } from "./componenets/FormModal";
+import { useSelector } from "react-redux";
+import { selectAllDucks } from "./reducers/duckReducer/duckSelector";
 
-function App() {
-  const [count, setCount] = useState(0)
-
+export const App = () => {
+  const [isMapOpen, setIsMapOpen] = useState(false);
+  const ducks = useSelector(selectAllDucks);
+  console.log("All our ducks are:", ducks);
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    <Box
+      style={{
+        width: "1200px",
+        height: "100%",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <OpenLayersMap />
+      <Button variant="contained" onClick={() => setIsMapOpen(true)}>
+        Add a Location
+      </Button>
+      {isMapOpen && (
+        <FormModal setIsMapOpen={setIsMapOpen} isMapOpen={isMapOpen} />
+      )}
+    </Box>
+  );
+};
 
-export default App
+export default App;
