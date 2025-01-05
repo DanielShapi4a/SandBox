@@ -8,21 +8,39 @@ import { selectAllDucks } from "./reducers/duckReducer/duckSelector";
 export const App = () => {
   const [isMapOpen, setIsMapOpen] = useState(false);
   const ducks = useSelector(selectAllDucks);
-  console.log("All our ducks are:", ducks);
+
+  const handleSaveDucks = () => {
+    const data = JSON.stringify(ducks, null, 2);
+
+    localStorage.setItem("ducksData", data);
+
+    const blob = new Blob([data], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "ducks.json";
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <Box
       style={{
-        width: "1200px",
-        height: "100%",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
       }}
     >
       <OpenLayersMap />
-      <Button variant="contained" onClick={() => setIsMapOpen(true)}>
-        Add a Location
-      </Button>
+      <Box sx={{ display: "flex", gap: 2 }}>
+        <Button variant="contained" onClick={() => setIsMapOpen(true)}>
+          Add a Location
+        </Button>
+        <Button variant="outlined" onClick={() => handleSaveDucks()}>
+          Save Ducks
+        </Button>
+      </Box>
+
       {isMapOpen && (
         <FormModal setIsMapOpen={setIsMapOpen} isMapOpen={isMapOpen} />
       )}

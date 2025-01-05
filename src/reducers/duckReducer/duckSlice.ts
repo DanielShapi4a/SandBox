@@ -2,20 +2,23 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { DuckState, initialState } from "./duckInitialState";
 
-let nextId = 1;
-
 export const duckSlice = createSlice({
   name: "duck",
   initialState,
   reducers: {
     addDuck: (state, action: PayloadAction<Omit<DuckState, "id">>) => {
-      state.push({
-        id: nextId++,
+      const nextId = state.length ? state[state.length - 1].id + 1 : 1;
+
+      const newDuck = {
+        id: nextId,
         longitude: action.payload.longitude,
         latitude: action.payload.latitude,
         name: action.payload.name,
-      });
-      console.log("added duck", action.payload);
+      };
+      state.push(newDuck);
+      const updatedDucks = JSON.stringify(state);
+      localStorage.setItem("ducksData", updatedDucks);
+      console.log("added duck", newDuck);
     },
     setDuckLocation: (
       state,
@@ -38,9 +41,13 @@ export const duckSlice = createSlice({
         console.log("set duck name", action.payload);
       }
     },
+    setDucks: (state, action: PayloadAction<DuckState[]>) => {
+      return action.payload;
+    },
   },
 });
 
-export const { addDuck, setDuckLocation, setDuckName } = duckSlice.actions;
+export const { addDuck, setDuckLocation, setDuckName, setDucks } =
+  duckSlice.actions;
 
 export default duckSlice.reducer;
