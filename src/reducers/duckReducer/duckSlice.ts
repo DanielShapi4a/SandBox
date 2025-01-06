@@ -51,6 +51,7 @@ export const duckSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(loadDucks.fulfilled, (_state, action) => {
+      console.log("Ducks loaded:", action.payload);
       return action.payload;
     });
     builder.addCase(loadDucks.rejected, (_state, action) => {

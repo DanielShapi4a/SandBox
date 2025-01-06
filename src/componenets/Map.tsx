@@ -13,6 +13,8 @@ import { fromLonLat } from "ol/proj";
 import duckImage from "/src/assets/Duck.png";
 import { AppDispatch } from "../store";
 import { loadDucks } from "../reducers/duckReducer/duckThunk";
+import { DuckState } from "../reducers/duckReducer/duckInitialState";
+import { setDucks } from "../reducers/duckReducer/duckSlice";
 
 const markerStyle = new Style({
   image: new Icon({
@@ -25,10 +27,25 @@ const markerStyle = new Style({
 const OpenLayersMap: React.FC = () => {
   const ducks = useSelector(selectAllDucks);
   const dispatch: AppDispatch = useDispatch();
+  console.log("Ducks:", ducks);
 
   // Dispatch thunk to load ducks
   useEffect(() => {
-    dispatch(loadDucks());
+    const loadData = async () => {
+      if (window.electronAPI) {
+        try {
+          const data = await dispatch(loadDucks());
+          console.log("Ducks data:", data);
+          dispatch(setDucks(data as unknown as DuckState[]));
+        } catch (error) {
+          console.error("Failed to load ducks data", error);
+        }
+      } else {
+        console.error("electronAPI is not available");
+      }
+    };
+
+    loadData();
   }, [dispatch]);
 
   // Render ducks on map

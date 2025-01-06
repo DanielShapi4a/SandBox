@@ -3,6 +3,7 @@ const path = require("path");
 const fs = require("fs-extra");
 
 const dataFilePath = path.join(app.getPath("downloads"), "ducks.json");
+console.log("Data file path:", dataFilePath);
 
 let mainWindow;
 
@@ -13,10 +14,9 @@ const createWindow = () => {
     height: 600,
     webPreferences: {
       contextIsolation: true,
-      preload: path.join(__dirname, "electron/preload.js"),
+      preload: path.join(__dirname, "/preload.js"),
     },
   });
-  // loading the react application
   mainWindow.loadURL("http://localhost:5173");
 
   mainWindow.on("closed", () => {
@@ -26,15 +26,22 @@ const createWindow = () => {
 
 ipcMain.handle("load-data", async () => {
   try {
+    console.log("Attempting to load data from:", dataFilePath);
     const data = await fs.readJson(dataFilePath);
+    console.log("Data loaded successfully:", data);
     return data;
   } catch (error) {
     console.error("Error reading JSON file:", error.message);
     return [];
   }
 });
+
 ipcMain.handle("save-data", async (_, data) => {
-  await fs.writeJson(dataFilePath, data);
+  try {
+    await fs.writeJson(dataFilePath, data);
+  } catch (error) {
+    console.error("Error writing JSON file:", error.message);
+  }
 });
 
 // Electron lifecycle events
