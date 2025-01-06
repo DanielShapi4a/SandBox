@@ -13,7 +13,7 @@ import { addDuck } from "../reducers/duckReducer/duckSlice";
 import { AppDispatch } from "../store";
 
 interface FormModalProps {
-  setIsMapOpen: (isOpen: boolean) => void;
+  setIsMapOpen: React.Dispatch<React.SetStateAction<boolean>>;
   isMapOpen: boolean;
 }
 
@@ -49,7 +49,7 @@ export const FormModal: React.FC<FormModalProps> = ({
             label="Duck Name"
             fullWidth
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={(e) => setName((e.target as HTMLInputElement).value)}
             required
             error={name === ""}
             sx={{ marginTop: 2 }}

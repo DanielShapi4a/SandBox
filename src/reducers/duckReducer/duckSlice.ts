@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { DuckState, initialState } from "./duckInitialState";
+import { loadDucks } from "./duckThunk";
 
 export const duckSlice = createSlice({
   name: "duck",
@@ -15,10 +16,13 @@ export const duckSlice = createSlice({
         latitude: action.payload.latitude,
         name: action.payload.name,
       };
-      state.push(newDuck);
-      const updatedDucks = JSON.stringify(state);
-      localStorage.setItem("ducksData", updatedDucks);
+      const updatedState = [...state, newDuck];
+
+      // Save updated data to local file via Electron
+      window.electronAPI.saveData(updatedState);
       console.log("added duck", newDuck);
+
+      return updatedState;
     },
     setDuckLocation: (
       state,
@@ -41,9 +45,17 @@ export const duckSlice = createSlice({
         console.log("set duck name", action.payload);
       }
     },
-    setDucks: (state, action: PayloadAction<DuckState[]>) => {
+    setDucks: (_state, action: PayloadAction<DuckState[]>) => {
       return action.payload;
     },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(loadDucks.fulfilled, (_state, action) => {
+      return action.payload;
+    });
+    builder.addCase(loadDucks.rejected, (_state, action) => {
+      console.error("Failed to load ducks data:", action.error.message);
+    });
   },
 });
 

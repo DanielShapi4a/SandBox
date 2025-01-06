@@ -11,8 +11,8 @@ import { Feature } from "ol";
 import { Point } from "ol/geom";
 import { fromLonLat } from "ol/proj";
 import duckImage from "../../public/Duck.png";
-import { setDucks } from "../reducers/duckReducer/duckSlice";
 import { AppDispatch } from "../store";
+import { loadDucks } from "../reducers/duckReducer/duckThunk";
 
 const markerStyle = new Style({
   image: new Icon({
@@ -26,28 +26,16 @@ const OpenLayersMap: React.FC = () => {
   const ducks = useSelector(selectAllDucks);
   const dispatch: AppDispatch = useDispatch();
 
+  // Dispatch thunk to load ducks
   useEffect(() => {
-    const storedDucks = localStorage.getItem("ducksData");
-    if (storedDucks) {
-      try {
-        const parsedDucks = JSON.parse(storedDucks);
-        console.log("Parsed ducksData:", parsedDucks);
-        dispatch(setDucks(parsedDucks));
-      } catch (error) {
-        console.error("Failed to parse stored ducks data:", error);
-      }
-    }
+    dispatch(loadDucks());
   }, [dispatch]);
 
+  // Render ducks on map
   useEffect(() => {
-    console.log("ducks updated:", ducks);
-
     const map = createMap("map-container");
-
     const vectorSource = new VectorSource();
-    const vectorLayer = new VectorLayer({
-      source: vectorSource,
-    });
+    const vectorLayer = new VectorLayer({ source: vectorSource });
 
     ducks.forEach((duck) => {
       const feature = new Feature({
@@ -59,7 +47,9 @@ const OpenLayersMap: React.FC = () => {
 
     map.addLayer(vectorLayer);
 
-    return () => map.setTarget();
+    return () => {
+      map.setTarget(); // Unmount map
+    };
   }, [ducks]);
 
   return (

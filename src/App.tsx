@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Box, Button } from "@mui/material";
 import OpenLayersMap from "./componenets/Map";
 import { FormModal } from "./componenets/FormModal";
@@ -9,18 +9,13 @@ export const App = () => {
   const [isMapOpen, setIsMapOpen] = useState(false);
   const ducks = useSelector(selectAllDucks);
 
-  const handleSaveDucks = () => {
-    const data = JSON.stringify(ducks, null, 2);
-
-    localStorage.setItem("ducksData", data);
-
-    const blob = new Blob([data], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "ducks.json";
-    a.click();
-    URL.revokeObjectURL(url);
+  const handleSaveDucks = async () => {
+    try {
+      await window.electronAPI.saveData(ducks);
+      console.log("Ducks data saved successfully!");
+    } catch (error) {
+      console.error("Failed to save ducks data:", error);
+    }
   };
 
   return (
@@ -36,7 +31,7 @@ export const App = () => {
         <Button variant="contained" onClick={() => setIsMapOpen(true)}>
           Add a Location
         </Button>
-        <Button variant="outlined" onClick={() => handleSaveDucks()}>
+        <Button variant="outlined" onClick={handleSaveDucks}>
           Save Ducks
         </Button>
       </Box>
