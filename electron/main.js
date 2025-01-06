@@ -2,10 +2,7 @@ const { app, BrowserWindow, ipcMain } = require("electron");
 const path = require("path");
 const fs = require("fs-extra");
 
-const dataFilePath = path.join(
-  app.getPath("C:\\Chrome downloads"),
-  "data.json"
-);
+const dataFilePath = path.join(app.getPath("downloads"), "ducks.json");
 
 let mainWindow;
 
@@ -16,7 +13,7 @@ const createWindow = () => {
     height: 600,
     webPreferences: {
       contextIsolation: true,
-      preload: path.join(__dirname, "preload.js"),
+      preload: path.join(__dirname, "electron/preload.js"),
     },
   });
   // loading the react application

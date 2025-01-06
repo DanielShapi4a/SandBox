@@ -2,13 +2,14 @@
   "name": "sandbox",
   "private": true,
   "version": "0.0.0",
-  "type": "module",
+  "type": "commonjs",
+  "main": "electron/main.js",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "start": "electron ."
+    "electron": "electron ."
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",

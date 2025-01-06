@@ -10,7 +10,7 @@ import Icon from "ol/style/Icon";
 import { Feature } from "ol";
 import { Point } from "ol/geom";
 import { fromLonLat } from "ol/proj";
-import duckImage from "../../public/Duck.png";
+import duckImage from "/src/assets/Duck.png";
 import { AppDispatch } from "../store";
 import { loadDucks } from "../reducers/duckReducer/duckThunk";
 
